@@ -124,8 +124,6 @@ public class VisitQueueDB implements VisitDAO {
 		for (Queue<Visit> visit : database) {
 			if (!visit.isEmpty())
 				if (visit.peek().getPriority().getCode() == priority.getCode()) {
-					// System.out.println used for checking if it works
-					// plz remove after
 					System.out.println("Removed: " + visit.remove());
 					break;
 				}
