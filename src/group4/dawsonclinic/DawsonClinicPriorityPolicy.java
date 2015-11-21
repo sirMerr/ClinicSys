@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import dw317.clinic.business.interfaces.PriorityPolicy;
 import dw317.clinic.business.interfaces.Visit;
+import dw317.clinic.data.interfaces.VisitDAO;
 
 /**
  * Code a DawsonClinicPriorityPolicy class that implements the PriorityPolicy
@@ -39,6 +40,9 @@ public class DawsonClinicPriorityPolicy implements PriorityPolicy {
 
 	private static final long serialVersionUID = 42031768871L;
 
+	public DawsonClinicPriorityPolicy(VisitDAO visitDB) {
+		
+	}
 	@Override
 	public Optional<Visit> getNextVisit() {
 		// TODO Auto-generated method stub
