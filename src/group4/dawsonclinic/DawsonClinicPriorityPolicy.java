@@ -30,7 +30,7 @@ import dw317.clinic.data.interfaces.VisitDAO;
  * Priority 3 visit dequeued 10. Priority 4 visit dequeued
  *
  * @author Tiffany Le-Nguyen, Hugo Pham, Sevan Topalian, Andrew Azevedo
- * @since JDK.1.7
+ * @since JDK.1.8
  *
  */
 public class DawsonClinicPriorityPolicy implements PriorityPolicy {
