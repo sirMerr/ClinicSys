@@ -1,5 +1,7 @@
 package group4.clinic.business;
 
+import group4.util.Utilities;
+
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -116,12 +118,7 @@ public class ClinicVisit implements Visit {
 	 */
 	@Override
 	public Patient getPatient() {
-		// Creating deep copy
-		Patient copyPatient = new ClinicPatient(newPatient.getName()
-				.getFirstName(), newPatient.getName().getLastName(), newPatient
-				.getRamq().toString());
-
-		return copyPatient;
+		return Utilities.copyOf(newPatient);
 	}
 
 	/**

@@ -5,10 +5,12 @@ package group4.dawsonclinic;
 
 import group4.clinic.business.Priority;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import dw317.clinic.business.interfaces.PriorityPolicy;
 import dw317.clinic.business.interfaces.Visit;
+import dw317.clinic.data.NonExistingVisitException;
 import dw317.clinic.data.interfaces.VisitDAO;
 
 /**
@@ -36,34 +38,51 @@ import dw317.clinic.data.interfaces.VisitDAO;
 public class DawsonClinicPriorityPolicy implements PriorityPolicy {
 
 	private static final long serialVersionUID = 42031768871L;
-	private VisitDAO visitDB;
+	private VisitDAO visitDAO;
 	private int position = 1;
 
-	public DawsonClinicPriorityPolicy(VisitDAO visitDB) {
-		this.visitDB = visitDB;
+	/**
+	 * 
+	 * @param visitDAO
+	 */
+	public DawsonClinicPriorityPolicy(VisitDAO visitDAO) {
+		this.visitDAO = visitDAO;
 	}
 
+	/**
+	 * Gets the next visit following a priority algorithm
+	 * 
+	 * @return Optional <Visit>
+	 * 		if none found, return null
+	 * @throws IOExecption 
+	 * 		if disconnect is unable to save/disconnect
+	 */
 	@Override
 	public Optional<Visit> getNextVisit() {
 
-		Optional<Visit> visit = null;
+		Optional<Visit> visit = Optional.empty();
 		Priority priority = Priority.VERYURGENT;
 
 		//If visitDB is null, return empty Optional object
-		if (visitDB == null) {
+		if (visitDAO == null) {
 			return visit;
 		}
 		// If Prioriy 1 exists, return them and remove them.
-		while (visitDB.getNextVisit(Priority.REANIMATION) != null) {
-			visit = visitDB.getNextVisit(Priority.REANIMATION);
-			visitDB.remove(Priority.REANIMATION);
+		int size = visitDAO.size(Priority.REANIMATION);
+		while (size != 0) {
+			visit = visitDAO.getNextVisit(Priority.REANIMATION);
+			visitDAO.remove(Priority.REANIMATION);
+			try {
+				visitDAO.disconnect();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			size--;
 			return visit;
 		}
 
 		//Algorithm for the priority dequeuing 
-		//If there is nothing and it reaches position 10, 
-		//there's an issue.
-		while (visitDB.getNextVisit(priority) == null && position <= 10) 
+		while (visitDAO.getNextVisit(priority) == null && position <= 10) 
 		{
 			switch (position) {
 			
@@ -86,11 +105,16 @@ public class DawsonClinicPriorityPolicy implements PriorityPolicy {
 			position++;
 		}
 		if (position > 10) {
-			position = 0;
+			position = 1;
 		}
-		visit = visitDB.getNextVisit(priority);
-		visitDB.remove(priority);
-		
+		visit = visitDAO.getNextVisit(priority);
+		visitDAO.remove(priority);
+		try {
+			visitDAO.disconnect();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return visit;
 	}
 

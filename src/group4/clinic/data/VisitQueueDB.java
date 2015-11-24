@@ -27,7 +27,7 @@ import dw317.clinic.data.interfaces.VisitDAO;
  * @author @author Andrew Azevedo, Tiffany Le-Nguyen, Hugo Pham & Sévan Topalian
  * @since JDK 1.8
  */
-public class VisitQueueDB implements VisitDAO {
+public class VisitQueueDB implements VisitDAO{
 
 	private List<Queue<Visit>> database;
 	private final ListPersistenceObject listPersistenceObject;

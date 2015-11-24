@@ -7,6 +7,8 @@ import java.time.LocalDate;
 
 import dw317.lib.Gender;
 import dw317.lib.Name;
+import java.io.Serializable;
+
 
 /**
  * This class creates a Ramq objects that holds one field value:
@@ -18,9 +20,9 @@ import dw317.lib.Name;
  * @since JDK 1.8
  * 
  */
-public class Ramq implements Comparable<Ramq> {
+public class Ramq implements Serializable, Comparable<Ramq> {
 	private String ramq;
-	
+	private static final long serialVersionUID = 42031768871L;
 	/**
 	 * Single parameter constructor of the Ramq class.
 	 * Only uses a RAMQ ID String to be initialized.
