@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import dw317.clinic.business.interfaces.PriorityPolicy;
 import dw317.clinic.business.interfaces.Visit;
-import dw317.clinic.data.NonExistingVisitException;
 import dw317.clinic.data.interfaces.VisitDAO;
 
 /**
@@ -36,13 +35,12 @@ import dw317.clinic.data.interfaces.VisitDAO;
  *
  */
 public class DawsonClinicPriorityPolicy implements PriorityPolicy {
-
 	private static final long serialVersionUID = 42031768871L;
 	private VisitDAO visitDAO;
 	private int position = 1;
 
 	/**
-	 * 
+	 * Public constructor
 	 * @param visitDAO
 	 */
 	public DawsonClinicPriorityPolicy(VisitDAO visitDAO) {
@@ -50,12 +48,12 @@ public class DawsonClinicPriorityPolicy implements PriorityPolicy {
 	}
 
 	/**
-	 * Gets the next visit following a priority algorithm
+	 * Gets the next visit following a priority algorithm, removes it from the
+	 * database and saves the database.
 	 * 
-	 * @return Optional <Visit>
-	 * 		if none found, return null
-	 * @throws IOExecption 
-	 * 		if disconnect is unable to save/disconnect
+	 * @return Optional <Visit> if none found, return null
+	 * @throws IOExecption
+	 *             if disconnect is unable to save/disconnect
 	 */
 	@Override
 	public Optional<Visit> getNextVisit() {
@@ -63,59 +61,78 @@ public class DawsonClinicPriorityPolicy implements PriorityPolicy {
 		Optional<Visit> visit = Optional.empty();
 		Priority priority = Priority.VERYURGENT;
 
-		//If visitDB is null, return empty Optional object
+		// If visitDB is null, return empty Optional object
 		if (visitDAO == null) {
+			System.out.println("The queue is empty");
 			return visit;
 		}
+
 		// If Prioriy 1 exists, return them and remove them.
-		int size = visitDAO.size(Priority.REANIMATION);
-		while (size != 0) {
-			visit = visitDAO.getNextVisit(Priority.REANIMATION);
-			visitDAO.remove(Priority.REANIMATION);
-			try {
-				visitDAO.disconnect();
-			} catch (IOException e) {
-				e.printStackTrace();
+		try {
+			if (visitDAO.getNextVisit(Priority.REANIMATION) != null) {
+				System.out.println("There is a priority 1 patient to attend");
+				visit = visitDAO.getNextVisit(Priority.REANIMATION);
+				visitDAO.remove(Priority.REANIMATION);
+				try {
+					visitDAO.disconnect();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return visit;
 			}
-			size--;
-			return visit;
+		} catch (NullPointerException npe)
+		{
+			System.out.println("The rest are untriaged");
+			return null;
 		}
 
-		//Algorithm for the priority dequeuing 
-		while (visitDAO.getNextVisit(priority) == null && position <= 10) 
-		{
+		// Algorithm for the priority dequeuing
+		// If it reaches above 10,the visit should have an unassigned priority
+		while (position <= 10) {
+			System.out.println("We are at position: " + position
+					+ " of the algorithm");
 			switch (position) {
-			
-			case 1: case 3: case 6:
+
+			case 1:
+			case 3:
+			case 6:
 			case 8:
-				priority = Priority.VERYURGENT; //Priority 2
+				priority = Priority.VERYURGENT; // Priority 2
 				break;
 
-			case 2: case 5:
+			case 2:
+			case 5:
 			case 9:
-				priority = Priority.URGENT; //Priority 3
+				priority = Priority.URGENT; // Priority 3
 				break;
-			case 4: case 10:
-				priority = Priority.LESSURGENT; //Priority 4
+			case 4:
+			case 10:
+				priority = Priority.LESSURGENT; // Priority 4
 				break;
 			case 7:
-				priority = Priority.NOTURGENT; //Priority 5
+				priority = Priority.NOTURGENT; // Priority 5
 				break;
 			}
 			position++;
+			if (visitDAO.getNextVisit(priority) != null) {
+				System.out.println("Found the next patient to be seen: ");
+				visit = visitDAO.getNextVisit(priority);
+				visitDAO.remove(priority);
+				try {
+					visitDAO.disconnect();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return visit;
+			}
+
 		}
 		if (position > 10) {
 			position = 1;
-		}
-		visit = visitDAO.getNextVisit(priority);
-		visitDAO.remove(priority);
-		try {
-			visitDAO.disconnect();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return visit;
-	}
 
+		}
+		System.out.println("Patients left have not been triaged");
+		return Optional.empty();
+
+	}
 }
