@@ -1,13 +1,17 @@
 package dw317.clinic.business.interfaces;
 
+import group4.clinic.business.Priority;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 import dw317.clinic.data.DuplicatePatientException;
 import dw317.clinic.data.NonExistingPatientException;
+import dw317.clinic.data.NonExistingVisitException;
 import dw317.lib.medication.Medication;
 
 /**
@@ -102,4 +106,13 @@ public interface PatientVisitManager extends Serializable {
 	void registerNewPatient(String firstName, String lastName, String ramq,
 			String telephone, Medication meds, String conditions)
 			throws DuplicatePatientException;
+	/**
+	*	Updates the	priority	of	the	first	visit	in	the	triage	queue to
+	*	a	new	priority.
+	*
+	*	@param newPriority
+	*												The	new	priority	after	triage	
+	*/
+	void	changeTriageVisitPriority(Priority	newPriority)
+	throws	NonExistingVisitException;
 }
