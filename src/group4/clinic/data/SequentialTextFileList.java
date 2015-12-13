@@ -101,7 +101,7 @@ public class SequentialTextFileList implements ListPersistenceObject {
 	 */
 	@Override
 	public void savePatientDatabase(List<Patient> patients) throws IOException {
-		// For now we’ll use the existing saveListToTextFile utility method.
+		// For now weâ€™ll use the existing saveListToTextFile utility method.
 		Patient[] patientArray = patients.toArray(new Patient[patients.size()]);
 		ListUtilities.saveListToTextFile(patientArray, patientFilename);
 	}
@@ -130,16 +130,20 @@ public class SequentialTextFileList implements ListPersistenceObject {
 		int length = sorted.length;
 		Visit[][] subsets = new Visit[Priority.values().length][length];
 		int subsetCtr = 0;
-		int allCtr = 0;
 		int p = 0;
+		
 		// iterate through priorities
-		while (allCtr < length && p < Priority.values().length) {
-			while (allCtr < length
-					&& sorted[allCtr].getPriority() == Priority.values()[p]) {
-				subsets[p][subsetCtr] = sorted[allCtr];
-				allCtr++;
-				subsetCtr++;
+		while (p < Priority.values().length) {
+			// iterate through sorted Visit array
+			for(Visit visitObj : sorted){
+				//compare Visit object with current Priority
+				if(visitObj.getPriority() == Priority.values()[p])
+				{
+					subsets[p][subsetCtr] = visitObj;
+					subsetCtr++;
+				}
 			}
+			
 			// resize
 			if (subsetCtr < length) {
 				Visit[] resized = new Visit[subsetCtr];

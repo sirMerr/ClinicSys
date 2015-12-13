@@ -54,27 +54,24 @@ public class ObjectSerializedList implements Serializable, ListPersistenceObject
 			Utilities.serializeObject(patients, patientFilename);
 			List<Queue<Visit>> visits = textFile.getVisitDatabase();
 			Utilities.serializeObject(visits, visitFilename);
-			}
+	}
 	
 	/**
 	 * Returns a patient database
 	 * 
 	 * @return List<Patient>
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Patient> getPatientDatabase() {
-		Patient[] patients;
+		@SuppressWarnings("rawtypes")
+		List<Patient> patientList = new ArrayList();
 		try {
-			patients = ClinicFileLoader
-					.getPatientListFromSequentialFile(patientFilename);
-		} catch (IOException e) {
+			patientList = (List<Patient>) Utilities.deserializeObject(patientFilename);
+		} catch (ClassNotFoundException | IOException e)	 {
 			return new ArrayList<Patient>();
 		}
-		// Create the adapter object that will be used as an argument to
-		// instantiate an ArrayList instance.
-		List<Patient> listAdapter = java.util.Arrays.asList(patients);
-		// return a reference to an ArrayList instance.
-		return new ArrayList<Patient>(listAdapter);
+		return patientList;
 	}
 
 	/**
@@ -82,34 +79,15 @@ public class ObjectSerializedList implements Serializable, ListPersistenceObject
 	 * 
 	 * @return List<Queue<Visit>>
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Queue<Visit>> getVisitDatabase() {
-		Visit[] visits;
-		Patient[] patients;
+	public List<Queue<Visit>> getVisitDatabase() {		
 		List<Queue<Visit>> db = new ArrayList<Queue<Visit>>(
-				Priority.values().length);
-		// get Patients
+		Priority.values().length);
 		try {
-			patients = ClinicFileLoader
-					.getPatientListFromSequentialFile(patientFilename);
-		} catch (IOException e) {
-			return new ArrayList<Queue<Visit>>(0); // return empty arraylist
-		}
-		// get Visits
-		try {
-			visits = ClinicFileLoader.getVisitListFromSequentialFile(
-					visitFilename, patients);
-		} catch (IOException e) {
-			return new ArrayList<Queue<Visit>>(0);
-		}
-		// separate visit array (already sorted) into queues by Priority
-		Visit[][] priority = separateSortedVisitArray(visits);
-		// Create the adapter object that will be used as an argument to
-		// instantiate a LinkedList instance.
-		for (int i = 0; i < Priority.values().length; i++) {
-			List<Visit> listAdapter = java.util.Arrays.asList(priority[i]);
-			// insert a reference to an LinkedList instance into array of queues
-			db.add(i, new LinkedList<Visit>(listAdapter));
+			db = (List<Queue<Visit>>) Utilities.deserializeObject(visitFilename);
+		} catch (ClassNotFoundException | IOException e)	 {
+			return new ArrayList<Queue<Visit>>();
 		}
 		return db;
 	}
@@ -150,24 +128,25 @@ public class ObjectSerializedList implements Serializable, ListPersistenceObject
 	}
 
 	/**
-	 * Save the patient database.
+	 * Save the patient database to serialized file.
 	 * 
 	 * @param List<Patient> patients
 	 */
 	@Override
 	public void savePatientDatabase(List<Patient> patients) throws IOException {
-		Patient[] patientArray = patients.toArray(new Patient[patients.size()]);
-		ListUtilities.saveListToTextFile(patientArray, patientFilename); //patient file name
+		Utilities.serializeObject(patients, patientFilename);
 	}
-
+	
+	/**
+	 * Saves the visit database to serialized file.
+	 * 
+	 * @param List<Queue<Visit>> visits
+	 */
 	@Override
 	public void saveVisitDatabase(List<Queue<Visit>> visits) throws IOException {
-		// merge the queues into an array
-		Visit[] visitArray = merge(visits);
-		// use the existing saveListToTextFile utility method
-		ListUtilities.saveListToTextFile(visitArray, visitFilename); //file name
-
+		Utilities.serializeObject(visits, visitFilename);
 	}
+	
 	/**
 	 * Merges a list of queues into a single array
 	 * 

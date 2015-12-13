@@ -10,6 +10,7 @@ import java.util.Optional;
 import group4.clinic.business.ClinicPatient;
 import group4.clinic.business.Ramq;
 import group4.util.ListUtilities;
+import group4.util.Utilities;
 import dw317.clinic.DefaultPatientVisitFactory;
 import dw317.clinic.business.interfaces.Patient;
 import dw317.clinic.data.DuplicatePatientException;
@@ -19,7 +20,7 @@ import dw317.lib.medication.Medication;
 import dw317.lib.medication.NDCMedication;
 
 /**
- * @author @author Andrew Azevedo, Tiffany Le-Nguyen, Hugo Pham & Sévan Topalian
+ * @author @author Andrew Azevedo, Tiffany Le-Nguyen, Hugo Pham & SÃ©van Topalian
  * @since JDK 1.8
  */
 public class PatientListDBTest {
@@ -32,19 +33,20 @@ public class PatientListDBTest {
 	 */
 	public static void main(String[] args) throws IOException {
 		
-		setup();
-		PatientListDB patientList = new PatientListDB
-				(new SequentialTextFileList("testfiles/testPatients.txt",
-						"testfiles/testVisits.txt"));
-		PatientListDB patientList2 = new PatientListDB
-				(new SequentialTextFileList("testfiles/testPatients.txt",
-						"testfiles/testVisits.txt"), 
-						DefaultPatientVisitFactory.DEFAULT);
+		setup();		
 		
-		System.out.println("One parameter constructor: \n"
-				+ patientList.toString());
-		System.out.println("\nTwo parameter constructor: \n" 
-				+ patientList2.toString());
+		
+		PatientListDB patientList = new PatientListDB
+				(new ObjectSerializedList
+				("testfiles/testPatientsSerialized.ser", 
+						"testfiles/testVisitsSerialized.ser"));
+		
+
+		
+		System.out.println("Using serialized files: \n"
+				+ patientList.toString() +"\n");
+		
+
 		
 		Ramq ramqTest1 = new Ramq("RODM90571001");
 		testExists(patientList, ramqTest1,true);
@@ -60,7 +62,7 @@ public class PatientListDBTest {
 		
 		Ramq ramqTest4 = new Ramq("SMIM85122501");
 		testExists(patientList, ramqTest4, true);
-		testGetPatient(patientList, ramqTest4, "SMIM85122501*Mike*Smith*5143634564*DIN*02239497*Absorbine Jr*Athlete’s foot");
+		testGetPatient(patientList, ramqTest4, "SMIM85122501*Mike*Smith*5143634564*DIN*02239497*Absorbine Jr*Athleteâ€™s foot");
 		
 		testGetPatientsPrescribed(patientList, new DINMedication("02238645","292 tablets"), "02238645");
 		testGetPatientsPrescribed(patientList, new NDCMedication("43479-501-51","Pimple punisher"), "43479-501-51");
@@ -86,8 +88,15 @@ public class PatientListDBTest {
 		testUpdate(patientList, patient4);
 		testUpdate(patientList, patient5);
 	
-		System.out.println(patientList.toString());
+		System.out.println("\n" + patientList.toString());
+		
 		patientList.disconnect();
+		patientList = new PatientListDB
+				(new ObjectSerializedList
+				("testfiles/testPatientsSerialized.ser", 
+						"testfiles/testVisitsSerialized.ser"));
+		System.out.println("\nTest disconnect: " 
+						+ patientList);
 		teardown();
 	}
 	
@@ -105,20 +114,47 @@ public class PatientListDBTest {
 		//...
 		patients [2] = "RODM90571001*Maria*Rodriguez*5145555511****";
 		patients [3] = "SMIM85122501*Mike*Smith*5143634564*"+
-				"DIN*02239497*Absorbine Jr*Athlete’s foot";
+				"DIN*02239497*Absorbine Jr*Athleteâ€™s foot";
 		patients [4] = "TOSH87100104*Shawn*To**" +
 				"DIN*02238645*SUPER TABLETS*Pain";
 		
-		File dir = new File("testfiles");
 
-		try {
-			if (!dir.exists()) {
+		
+		String[] visits = new String[10];
+		visits [0] = "SMIM85122501*2015*9*1*13*30*******";
+		visits [1] = "RODM90571001*2015*9*1*14*45*******";
+		//...
+		visits [2] = "LISH87100101*2015*9*1*13*20*" +
+				"2015*12*1*13*45*2*Severe rash";
+		visits [3] = "RAOV86112001*2015*9*1*13*50*" +
+				"2015*12*1*14*10*5*Bored";
+
+		File dir = new File("testfiles");
+		
+		
+		try
+		{
+			if (!dir.exists()){
 				dir.mkdirs();
 			}
+			
+			
 			ListUtilities.saveListToTextFile(patients,
 					"testfiles/testPatients.txt");
-		} catch (IOException io) {
-			System.out.println("Error creating file in setUp()");
+			
+			ListUtilities.saveListToTextFile(visits,
+					"testfiles/testVisits.txt");
+			
+			ObjectSerializedList test = new ObjectSerializedList
+				("testfiles/testPatientsSerialized.ser", 
+						"testfiles/testVisitsSerialized.ser");
+			test.convertSequentialFilesToSerialized("testfiles/testPatients.txt",
+					"testfiles/testVisits.txt");
+			
+		}
+		catch(IOException ioe)
+		{
+			ioe.getMessage();
 		}
 	}
 
