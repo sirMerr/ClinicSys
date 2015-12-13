@@ -13,17 +13,24 @@ import group4.clinic.data.ObjectSerializedList;
  */
 public class ObjectSerializedListTest {
 	
-	public static void main(String[] args){
+ublic static void main(String[] args){
 		ObjectSerializedList test = new ObjectSerializedList
-				("testfiles/testPatients", "testfiles/testvisits.txt");
+				("testfiles/patientsSerialized.ser", 
+						"testfiles/visitsSerialized.ser");
 		try
 		{
-			test.convertSequentialFilesToSerialized("testfiles/testpatients.txt", "testfiles/testvisits.txt");
+			test.convertSequentialFilesToSerialized("testfiles/patients.txt",
+					"testfiles/visits.txt");
 		}
 		catch(IOException ioe)
 		{
 			ioe.getMessage();
 		}
-
+		
+		System.out.println("ObjectSerializedList getPatientDatabase() test: \n" 
+				+ test.getPatientDatabase());
+		System.out.println("ObjectSerializedList getVisitDatabase() test: \n"
+				+ test.getVisitDatabase());
+		
 	}
 }
