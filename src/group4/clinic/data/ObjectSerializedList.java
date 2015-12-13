@@ -128,24 +128,25 @@ public class ObjectSerializedList implements Serializable, ListPersistenceObject
 	}
 
 	/**
-	 * Save the patient database.
+	 * Save the patient database to serialized file.
 	 * 
 	 * @param List<Patient> patients
 	 */
 	@Override
 	public void savePatientDatabase(List<Patient> patients) throws IOException {
-		Patient[] patientArray = patients.toArray(new Patient[patients.size()]);
-		ListUtilities.saveListToTextFile(patientArray, patientFilename); //patient file name
+		Utilities.serializeObject(patients, patientFilename);
 	}
-
+	
+	/**
+	 * Saves the visit database to serialized file.
+	 * 
+	 * @param List<Queue<Visit>> visits
+	 */
 	@Override
 	public void saveVisitDatabase(List<Queue<Visit>> visits) throws IOException {
-		// merge the queues into an array
-		Visit[] visitArray = merge(visits);
-		// use the existing saveListToTextFile utility method
-		ListUtilities.saveListToTextFile(visitArray, visitFilename); //file name
-
+		Utilities.serializeObject(visits, visitFilename);
 	}
+	
 	/**
 	 * Merges a list of queues into a single array
 	 * 
