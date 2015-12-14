@@ -84,12 +84,12 @@ public class Clinic extends Observable implements PatientVisitManager {
 	 */
 	@Override
 	public void createVisit(Patient patient, String complaint) {
-		
 		if (patient == null)
 			throw new IllegalArgumentException("Patient cannot be null");
 		
 		Visit newVisit = new ClinicVisit(patient);
 		newVisit.setComplaint(Optional.ofNullable(complaint));
+
 
 		visitConnection.add(newVisit);
 		
@@ -159,10 +159,11 @@ public class Clinic extends Observable implements PatientVisitManager {
 												"or RAMQ is invalid");
 		}
 		// Create new patient
+
 		Patient newPatient = new ClinicPatient(firstName, lastName, ramq);
-		newPatient.setTelephoneNumber(Optional.of(telephone));
-		newPatient.setMedication(Optional.of(meds));
-		newPatient.setExistingConditions(Optional.of(conditions));
+		newPatient.setTelephoneNumber(Optional.ofNullable(telephone));
+		newPatient.setMedication(Optional.ofNullable(meds));
+		newPatient.setExistingConditions(Optional.ofNullable(conditions));
 
 		patientConnection.add(newPatient);
 
