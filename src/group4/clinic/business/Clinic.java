@@ -45,7 +45,7 @@ public class Clinic extends Observable implements PatientVisitManager {
 	@Override
 	public void createVisit(Patient patient, String complaint) {
 		ClinicVisit newVisit = new ClinicVisit(patient);
-		newVisit.setComplaint(Optional.of(complaint));
+		newVisit.setComplaint(Optional.ofNullable(complaint));
 
 		setChanged();
 		notifyObservers(newVisit);
@@ -136,9 +136,9 @@ public class Clinic extends Observable implements PatientVisitManager {
 			throws DuplicatePatientException {
 		// Create new patient
 		ClinicPatient newPatient = new ClinicPatient(firstName, lastName, ramq);
-		newPatient.setTelephoneNumber(Optional.of(telephone));
-		newPatient.setMedication(Optional.of(meds));
-		newPatient.setExistingConditions(Optional.of(conditions));
+		newPatient.setTelephoneNumber(Optional.ofNullable(telephone));
+		newPatient.setMedication(Optional.ofNullable(meds));
+		newPatient.setExistingConditions(Optional.ofNullable(conditions));
 
 		patientConnection.add(newPatient);
 		
