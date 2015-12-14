@@ -70,7 +70,6 @@ public class VisitQueueDBTest {
 		String[] visits = new String[10];
 		visits [0] = "SMIM85122501*2015*9*1*13*30*******";
 		visits [1] = "RODM90571001*2015*9*1*14*45*******";
-		//...
 		visits [2] = "LISH87100101*2015*9*1*13*20*" +
 				"2015*12*1*13*45*2*Severe rash";
 		visits [3] = "RAOV86112001*2015*9*1*13*50*" +

@@ -38,7 +38,7 @@ public final class DINMedication extends AbstractMedication {
 	}
 
 	/**
-	 * This methods validate the medication number according to the NDC scheme.
+	 * This methods validate the medication number according to the DIN scheme.
 	 * 
 	 * @param number		The medication number to be validated
 	 * @return The validated medication number.

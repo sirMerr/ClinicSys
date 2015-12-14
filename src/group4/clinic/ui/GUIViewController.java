@@ -7,7 +7,6 @@ import group4.clinic.business.Clinic;
 import group4.clinic.business.Priority;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -24,13 +23,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import dw317.clinic.business.interfaces.Patient;
 import dw317.clinic.business.interfaces.Visit;
 import dw317.clinic.data.NonExistingVisitException;
+import dw317.lib.medication.DINMedication;
 import dw317.lib.medication.Medication;
+import dw317.lib.medication.NDCMedication;
 
 /**
  * @author Tiffany
@@ -40,7 +40,6 @@ public class GUIViewController extends JFrame implements Observer {
 
 	// Variables
 	private Clinic model;
-	private String result = null;
 	private Medication medication = null;
 
 	// Panels
@@ -76,8 +75,11 @@ public class GUIViewController extends JFrame implements Observer {
 	private JTextField txtFldRamq = null;
 	private JTextField txtFldLastName = null;
 	private JTextField txtFldFirstName = null;
-
-	// TextArea
+	
+	//Labels
+	JLabel lblCreateFail;
+	
+	//TextArea
 	private JTextArea displayResult;
 
 	public GUIViewController(Observable model) {
@@ -99,8 +101,7 @@ public class GUIViewController extends JFrame implements Observer {
 	public void initiateContentPanel() {
 		setResizable(false);
 		setTitle("Dawson Medical Clinic");
-		setBounds(120, 120, 450, 450); // Might need to change
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(120, 120, 450, 450);
 
 		// Initiate panels
 		pnlContent = new JPanel();
@@ -180,7 +181,7 @@ public class GUIViewController extends JFrame implements Observer {
 		// Create Display window
 		displayResult = new JTextArea("Results will appear here");
 		displayResult.setBackground(Color.WHITE);
-		displayResult.setBounds(140, 220, 280, 120);
+		displayResult.setBounds(20, 220, 400, 120);
 
 		// Add radio buttons to group
 		ButtonGroup buttonGroup = new ButtonGroup();
@@ -207,7 +208,15 @@ public class GUIViewController extends JFrame implements Observer {
 	 * Sets the elements in the create new panel
 	 */
 	public void initiateCreateNewPanel() {
+		
 		// Create labels and add to panel
+		
+		lblCreateFail = new JLabel("Creation failed");
+		lblCreateFail.setForeground(Color.RED);
+		lblCreateFail.setBounds(140, 310, 120, 30);
+		lblCreateFail.setVisible(false);
+		pnlCreateNew.add(lblCreateFail);
+		
 		JLabel lblFirstName = new JLabel("First Name");
 		lblFirstName.setBounds(40, 10, 120, 25);
 		pnlCreateNew.add(lblFirstName);
@@ -293,6 +302,7 @@ public class GUIViewController extends JFrame implements Observer {
 		JButton btnCreate = new JButton("Create");
 		btnCreate.setBounds(240, 310, 80, 30);
 		pnlCreateNew.add(btnCreate);
+		btnCreate.addActionListener(new btnCreateNewListener());
 	}
 
 	/**
@@ -303,12 +313,16 @@ public class GUIViewController extends JFrame implements Observer {
 
 		/**
 		 * Action listener for btnExit.
+		 * 
+		 * @param ActionEvent e
+		 * 		Event 
 		 */
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent e) {
 			try {
 				model.closeClinic();
 			} catch (IOException ioe) {
+				System.out.println(ioe.getMessage());
 			} finally {
 				System.exit(0);
 			}
@@ -317,16 +331,20 @@ public class GUIViewController extends JFrame implements Observer {
 	}
 
 	/**
-	 * Inner class action listener.
+	 * Inner class action listener for the next to triage
+	 * button.
 	 *
 	 */
 	private class btnNextToTriageListener implements ActionListener {
 
 		/**
 		 * Action listener for Next to Triage button
+		 * 
+		 * @param ActionEvent e
+		 * 		Event 
 		 */
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent e) {
 			try {
 				model.nextForTriage();
 			} catch (Exception exception) {
@@ -337,16 +355,20 @@ public class GUIViewController extends JFrame implements Observer {
 	}
 
 	/**
-	 * Inner class action listener.
+	 * Inner class action listener for the prioritize
+	 * triage button.
 	 *
 	 */
 	private class btnPrioritizeTriageListener implements ActionListener {
 
 		/**
 		 * Action listener for Prioritize Triage button.
+		 * 
+		 * @param ActionEvent e
+		 * 		Event 
 		 */
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent e) {
 			rbtnReanimation.setSelected(true);
 			rbtnReanimation.setVisible(true);
 			rbtnVeryUrgent.setVisible(true);
@@ -358,36 +380,43 @@ public class GUIViewController extends JFrame implements Observer {
 	}
 
 	/**
-	 * Inner class action listener.
+	 * Inner class action listener for the next to examine
+	 * button.
 	 *
 	 */
 	private class btnNextToExamineListener implements ActionListener {
 
 		/**
 		 * Action listener for btnExit.
+		 * 
+		 * @param ActionEvent e
+		 * 		Event 
 		 */
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent e) {
 			try {
+				displayResult.setText("Here");
 				model.nextForExamination();
 			} catch (Exception exception) {
 				displayResult.setText(exception.getMessage());
 			}
 		}
-
 	}
 
 	/**
-	 * Inner class action listener.
+	 * Inner class action listener for changing priorities.
 	 *
 	 */
 	private class btnPrioritySelectListener implements ActionListener {
 
 		/**
 		 * Action listener for priority selection button.
+		 * 
+		 * @param ActionEvent e
+		 * 		Event 
 		 */
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent e) {
 			Priority priority = null;
 			if (rbtnReanimation.isSelected())
 				priority = Priority.REANIMATION;
@@ -402,11 +431,11 @@ public class GUIViewController extends JFrame implements Observer {
 
 			try {
 				model.changeTriageVisitPriority(priority);
-			} catch (NonExistingVisitException e1) {
-				displayResult.setText(e1.getMessage());
-			} catch (Exception exception) {
-				displayResult.setText(exception.getMessage());
-			}
+			} catch (NonExistingVisitException neve) {
+				displayResult.setText(neve.getMessage());
+			} catch (Exception exeption) {
+				displayResult.setText(exeption.getMessage());
+			}   
 
 			rbtnReanimation.setVisible(false);
 			rbtnVeryUrgent.setVisible(false);
@@ -418,11 +447,41 @@ public class GUIViewController extends JFrame implements Observer {
 
 	}
 
+	private class btnCreateNewListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				String firstName = txtFldFirstName.getText();
+				String ramq = txtFldRamq.getText();
+				String telephone = txtFldPhoneNumber.getText();
+				String lastName = txtFldLastName.getText();
+				String conditions = txtFldCondition.getText();
+				
+				if (txtFldMedScheme.getText().equalsIgnoreCase("DIN"))
+					medication = new DINMedication(txtFldMedNumber.getText(), txtFldMedName.getText());
+				else if (txtFldMedScheme.getText().equalsIgnoreCase("NDC"))
+					medication = new NDCMedication(txtFldMedNumber.getText(), txtFldMedName.getText());
+				else if (txtFldMedScheme.getText() == null)
+					medication = null;
+				else
+					throw new IllegalArgumentException("Invalid medication scheme");
+				
+				model.registerNewPatient(firstName, lastName, ramq, telephone, medication, conditions);
+				displayResult.setText("Patient created");
+			} catch (Exception exception) {
+				lblCreateFail.setVisible(true);
+				displayResult.setText("Error in creation. Overriden." + exception.getMessage());
+			}
+			
+		}
+		
+	}
 	/**
 	 * Observable update method. 
 	 * 
-	 * @param Observable arg0
-	 * @param Object arg1
+	 * @param Observable obs
+	 * @param Object arg
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -432,7 +491,7 @@ public class GUIViewController extends JFrame implements Observer {
 		{
 			displayResult.setText("Next Visit: " + ((Optional<Visit>) arg)
 		                          .get().getPatient().getName().getFullName());
-		} else if (arg instanceof Patient)
+		} else if (arg instanceof Patient) 
 		{
 			displayResult.setText("Patient: " + ((Patient)arg).getName().toString()
 					              + "\nRAMQ: " + ((Patient) arg).getRamq().toString());
@@ -441,7 +500,7 @@ public class GUIViewController extends JFrame implements Observer {
 			displayResult.setText("Priority updated to: " + (Priority)arg );
 		} else
 		{
-			displayResult.setText("Null");
+			displayResult.setText("Results will be displayed here");
 		}
 
 	}

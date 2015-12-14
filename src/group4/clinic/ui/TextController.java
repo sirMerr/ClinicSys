@@ -5,6 +5,7 @@ package group4.clinic.ui;
 
 import group4.clinic.business.Priority;
 
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -104,34 +105,9 @@ public class TextController {
 		STOP
 	}
 	
-	private void userCommand(Command command){
-		if(command != null)
-			switch(command) {
-			case PATIENT_INFO:
-				getPatientInfo();
-				break;
-			case NEW_PATIENT:
-				break;
-			case NEW_VISIT:
-				break;
-			case NEXT_TO_TRIAGE:
-				getNextToTriage();
-				break;
-			case CHANGE_PRIORITY:
-				changePriority();
-				break;
-			case NEXT_TO_EXAMINE:
-				break;
-			case STOP:
-				System.out
-				.println("\tThank you for using Dawson Clinic.\n" 
-						+ "\tHave a nice day!");
-				break;
-			}
-	}
+	
 	
 	private void changePriority() {
-		
 		final String PRIORITY_MENU = "Select the new priority from the menu:\n"
 				+"\t1 - REANIMATION\n"
 				+"\t2 - VERYURGENT\n"
@@ -148,7 +124,7 @@ public class TextController {
 			System.out.print(PRIORITY_MENU);
 			option = acceptInt(keyboard);
 			keyboard.nextLine();
-			if(option <= 6)
+			if(option <= 6 && option >= 1)
 				switch (option) {
 				case 1:
 					newPriority = Priority.values()[option];
@@ -165,15 +141,23 @@ public class TextController {
 				case 5:
 					newPriority = Priority.values()[option];
 					break;
-				case 6:
-					newPriority = Priority.values()[option];
-					break;
 				default:
 					System.out
 					.println("\t-Invalid menu options, please try again :)\n");
 				}
 
-			System.out.println(newPriority);
+			if(newPriority != null)
+			{
+				System.out.println("Triage visit priority changed to: "
+						+  newPriority);
+				try {
+					model.changeTriageVisitPriority(newPriority);
+				} catch (NonExistingVisitException | NullPointerException e) {
+					// TODO Auto-generated catch block
+					System.out.println("No more visit for triage.");
+				}
+				loopAgain = false;
+			}
 			
 		} while (loopAgain);
 	}
@@ -182,6 +166,21 @@ public class TextController {
 		Patient newPatient;
 		
 		
+	}
+	
+	private void getNextToExamine() {
+		Visit aVisit;
+		Name visitName;
+		try{
+			aVisit = model.nextForExamination().get();
+			visitName = aVisit.getPatient().getName();
+			System.out.println("Next visit:\n" 
+				+ visitName.getLastName() + ", "
+				+ visitName.getFirstName() + "\n");
+		}
+		catch (NoSuchElementException | NullPointerException e) {
+			System.out.println("No visit available for examination.\n");
+		}
 	}
 	
 	private void getNextToTriage() {
@@ -194,10 +193,11 @@ public class TextController {
 				+ visitName.getLastName() + ", "
 				+ visitName.getFirstName() + "\n");
 		}
-		catch (NoSuchElementException e) {
+		catch (NoSuchElementException | NullPointerException e) {
 			System.out.println("No visit available for triage.\n");
 		}
 	}
+	
 	
 	private void getPatientInfo() {
 		boolean loopAgain = true;
@@ -230,4 +230,37 @@ public class TextController {
 		} while (loopAgain);
 	}
 	
+	private void userCommand(Command command){
+		if(command != null)
+			switch(command) {
+			case PATIENT_INFO:
+				getPatientInfo();
+				break;
+			case NEW_PATIENT:
+				createNewPatient();
+				break;
+			case NEW_VISIT:
+				break;
+			case NEXT_TO_TRIAGE:
+				getNextToTriage();
+				break;
+			case CHANGE_PRIORITY:
+				changePriority();
+				break;
+			case NEXT_TO_EXAMINE:
+				getNextToExamine();
+				break;
+			case STOP:
+				try {
+					model.closeClinic();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out
+				.println("\tThank you for using Dawson Clinic.\n" 
+						+ "\tHave a nice day!");
+				break;
+			}
+	}
 }
