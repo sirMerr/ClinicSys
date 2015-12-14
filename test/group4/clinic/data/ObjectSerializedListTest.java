@@ -55,8 +55,8 @@ public class ObjectSerializedListTest {
 			String visitFile, DefaultPatientVisitFactory factory) {
 		try {
 			ObjectSerializedList listObject = new ObjectSerializedList(
-					"datafiles/database/patients.ser",
-					"datafiles/database/visits.ser");
+					"testfiles/testVisits.ser",
+					"testfiles/testPatients.ser");
 			listObject.convertSequentialFilesToSerialized(patientFile,
 					visitFile);
 
@@ -75,8 +75,8 @@ public class ObjectSerializedListTest {
 		try {
 
 			ObjectSerializedList listObject = new ObjectSerializedList(
-					"datafiles/database/patients.ser",
-					"datafiles/database/visits.ser");
+					"testfiles/testVisits.ser",
+					"testfiles/testPatients.ser");
 
 			listObject.convertSequentialFilesToSerialized(patientFile,
 					visitFile);
@@ -97,8 +97,8 @@ public class ObjectSerializedListTest {
 			DefaultPatientVisitFactory factory) {
 		try {
 			ObjectSerializedList listObject = new ObjectSerializedList(
-					"datafiles/database/patients.ser",
-					"datafiles/database/visits.ser");
+					"testfiles/testVisits.ser",
+					"testfiles/testPatients.ser");
 			listObject.convertSequentialFilesToSerialized(patientFile,
 					visitFile);
 			System.out.println(listObject.getVisitDatabase());
@@ -109,6 +109,9 @@ public class ObjectSerializedListTest {
 		System.out.println();
 	}
 
+	/**
+	 * Set up patients and visits
+	 */
 	private static void setup() {
 		String[] patients = new String[10];
 		patients[0] = "LISH87100101*Shao*Li**"
@@ -140,6 +143,9 @@ public class ObjectSerializedListTest {
 		}
 	}
 
+	/**
+	 * Delete existing files
+	 */
 	private static void teardown() {
 		File file = new File("testfiles/testPatients.txt");
 		
