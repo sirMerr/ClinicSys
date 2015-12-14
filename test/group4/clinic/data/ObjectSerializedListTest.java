@@ -55,8 +55,8 @@ public class ObjectSerializedListTest {
 			String visitFile, DefaultPatientVisitFactory factory) {
 		try {
 			ObjectSerializedList listObject = new ObjectSerializedList(
-					"testfiles/testVisits.ser",
-					"testfiles/testPatients.ser");
+					"testfiles/testVisitsSerialized.ser",
+					"testfiles/testPatientsSerialized.ser");
 			listObject.convertSequentialFilesToSerialized(patientFile,
 					visitFile);
 
@@ -75,8 +75,8 @@ public class ObjectSerializedListTest {
 		try {
 
 			ObjectSerializedList listObject = new ObjectSerializedList(
-					"testfiles/testVisits.ser",
-					"testfiles/testPatients.ser");
+					"testfiles/testVisitsSerialized.ser",
+					"testfiles/testPatientsSerialized.ser");
 
 			listObject.convertSequentialFilesToSerialized(patientFile,
 					visitFile);
@@ -97,8 +97,8 @@ public class ObjectSerializedListTest {
 			DefaultPatientVisitFactory factory) {
 		try {
 			ObjectSerializedList listObject = new ObjectSerializedList(
-					"testfiles/testVisits.ser",
-					"testfiles/testPatients.ser");
+					"testfiles/testVisitsSerialized.ser",
+					"testfiles/testPatientsSerialized.ser");
 			listObject.convertSequentialFilesToSerialized(patientFile,
 					visitFile);
 			System.out.println(listObject.getVisitDatabase());
