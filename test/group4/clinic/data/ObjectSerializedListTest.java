@@ -13,7 +13,7 @@ import group4.clinic.data.ObjectSerializedList;
  */
 public class ObjectSerializedListTest {
 	
-ublic static void main(String[] args){
+public static void main(String[] args){
 		ObjectSerializedList test = new ObjectSerializedList
 				("testfiles/patientsSerialized.ser", 
 						"testfiles/visitsSerialized.ser");
@@ -31,6 +31,21 @@ ublic static void main(String[] args){
 				+ test.getPatientDatabase());
 		System.out.println("ObjectSerializedList getVisitDatabase() test: \n"
 				+ test.getVisitDatabase());
+		
+		//converting database files to serialized
+		ObjectSerializedList serializedDB = new ObjectSerializedList
+				("datafiles/database/patients.ser",
+						"datafiles/database/visits.ser");
+		try
+		{
+			serializedDB.convertSequentialFilesToSerialized
+			("datafiles/database/patients.txt", 
+					"datafiles/database/visits.txt");
+		}
+		catch(IOException ioe)
+		{
+			ioe.getMessage();
+		}
 		
 	}
 }

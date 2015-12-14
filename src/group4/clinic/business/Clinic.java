@@ -28,8 +28,8 @@ public class Clinic extends Observable implements PatientVisitManager {
 	private final PatientDAO patientConnection;
 	private final VisitDAO visitConnection;
 
-	public Clinic(ClinicFactory factory, PatientDAO patientConnection,
-			VisitDAO visitConnection) {
+	public Clinic(PatientDAO patientConnection,
+			VisitDAO visitConnection,ClinicFactory factory) {
 		this.factory = factory;
 		this.patientConnection = patientConnection;
 		this.visitConnection = visitConnection;
