@@ -4,6 +4,7 @@
 package group4.clinic.ui;
 
 import group4.clinic.business.Clinic;
+import group4.clinic.business.Priority;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -25,6 +27,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import dw317.clinic.business.interfaces.Patient;
+import dw317.clinic.business.interfaces.Visit;
+import dw317.clinic.data.NonExistingVisitException;
 import dw317.lib.medication.Medication;
 
 /**
@@ -318,11 +323,15 @@ public class GUIViewController extends JFrame implements Observer {
 	private class btnNextToTriageListener implements ActionListener {
 
 		/**
-		 * Action listener for btnExit.
+		 * Action listener for Next to Triage button
 		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-
+			try {
+				model.nextForTriage();
+			} catch (Exception exception) {
+				displayResult.setText(exception.getMessage());
+			}
 		}
 
 	}
@@ -361,9 +370,6 @@ public class GUIViewController extends JFrame implements Observer {
 		public void actionPerformed(ActionEvent arg0) {
 			try {
 				model.nextForExamination();
-				// result = "Next Visit: \n\n" +
-				// model.nextForExamination().get().getPatient().getName().toString();
-				// update(model, model.nextForExamination());
 			} catch (Exception exception) {
 				displayResult.setText(exception.getMessage());
 			}
@@ -378,18 +384,65 @@ public class GUIViewController extends JFrame implements Observer {
 	private class btnPrioritySelectListener implements ActionListener {
 
 		/**
-		 * Action listener for btnExit.
+		 * Action listener for priority selection button.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			Priority priority = null;
+			if (rbtnReanimation.isSelected())
+				priority = Priority.REANIMATION;
+			else if (rbtnVeryUrgent.isSelected())
+				priority = Priority.VERYURGENT;
+			else if (rbtnUrgent.isSelected())
+				priority = Priority.URGENT;
+			else if (rbtnLessUrgent.isSelected())
+				priority = Priority.LESSURGENT;
+			else if (rbtnNotUrgent.isSelected())
+				priority = Priority.NOTURGENT;
 
+			try {
+				model.changeTriageVisitPriority(priority);
+			} catch (NonExistingVisitException e1) {
+				displayResult.setText(e1.getMessage());
+			} catch (Exception exception) {
+				displayResult.setText(exception.getMessage());
+			}
+
+			rbtnReanimation.setVisible(false);
+			rbtnVeryUrgent.setVisible(false);
+			rbtnUrgent.setVisible(false);
+			rbtnLessUrgent.setVisible(false);
+			rbtnNotUrgent.setVisible(false);
+			btnPrioritySelect.setVisible(false);
 		}
 
 	}
 
+	/**
+	 * Observable update method. 
+	 * 
+	 * @param Observable arg0
+	 * @param Object arg1
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
+	public void update(Observable obs, Object arg) {
+
+		if (arg instanceof Optional<?>)
+		{
+			displayResult.setText("Next Visit: " + ((Optional<Visit>) arg)
+		                          .get().getPatient().getName().getFullName());
+		} else if (arg instanceof Patient)
+		{
+			displayResult.setText("Patient: " + ((Patient)arg).getName().toString()
+					              + "\nRAMQ: " + ((Patient) arg).getRamq().toString());
+		} else if (arg instanceof Priority)
+		{
+			displayResult.setText("Priority updated to: " + (Priority)arg );
+		} else
+		{
+			displayResult.setText("Null");
+		}
 
 	}
 }

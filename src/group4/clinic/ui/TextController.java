@@ -149,29 +149,29 @@ public class TextController {
 			option = acceptInt(keyboard);
 			keyboard.nextLine();
 			if(option <= 6)
-			switch (option) {
-			case 1:
-				newPriority = Priority.values()[option];
-				break;
-			case 2:
-				newPriority = Priority.values()[option];
-				break;
-			case 3:
-				newPriority = Priority.values()[option];
-				break;
-			case 4:
-				newPriority = Priority.values()[option];
-				break;
-			case 5:
-				newPriority = Priority.values()[option];
-				break;
-			case 6:
-				newPriority = Priority.values()[option];
-				break;
-			default:
-				System.out
-				.println("\t-Invalid menu options, please try again :)\n");
-			}
+				switch (option) {
+				case 1:
+					newPriority = Priority.values()[option];
+					break;
+				case 2:
+					newPriority = Priority.values()[option];
+					break;
+				case 3:
+					newPriority = Priority.values()[option];
+					break;
+				case 4:
+					newPriority = Priority.values()[option];
+					break;
+				case 5:
+					newPriority = Priority.values()[option];
+					break;
+				case 6:
+					newPriority = Priority.values()[option];
+					break;
+				default:
+					System.out
+					.println("\t-Invalid menu options, please try again :)\n");
+				}
 
 			System.out.println(newPriority);
 			
@@ -230,6 +230,4 @@ public class TextController {
 		} while (loopAgain);
 	}
 	
-	
-
 }
