@@ -462,7 +462,7 @@ public class GUIViewController extends JFrame implements Observer {
 					medication = new DINMedication(txtFldMedNumber.getText(), txtFldMedName.getText());
 				else if (txtFldMedScheme.getText().equalsIgnoreCase("NDC"))
 					medication = new NDCMedication(txtFldMedNumber.getText(), txtFldMedName.getText());
-				else if (txtFldMedScheme.getText() == null)
+				else if (txtFldMedScheme.getText() == null || txtFldMedScheme.getText().length() < 1)
 					medication = null;
 				else
 					throw new IllegalArgumentException("Invalid medication scheme");
@@ -471,7 +471,7 @@ public class GUIViewController extends JFrame implements Observer {
 				displayResult.setText("Patient created");
 			} catch (Exception exception) {
 				lblCreateFail.setVisible(true);
-				displayResult.setText("Error in creation. Overriden." + exception.getMessage());
+				displayResult.setText("Error in creation. Overriden. " + exception.getMessage());
 			}
 			
 		}

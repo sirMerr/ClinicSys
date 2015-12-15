@@ -22,13 +22,13 @@ public class DawsonClinicGUIApp {
 		
 		ClinicFactory factory = DawsonClinicFactory.DAWSON_CLINIC;
 		PatientDAO patientDb = new PatientListDB(new ObjectSerializedList(
-				"testfiles/testVisitsSerialized.ser",
-				"testfiles/testPatientsSerialized.ser"),
+				"testfiles/testPatientsSerialized.ser",
+				"testfiles/testVisitsSerialized.ser"),
 				factory.getPatientVisitFactory());
 		
 		VisitDAO visitDb = new VisitQueueDB(new ObjectSerializedList(
-				"testfiles/testVisitsSerialized.ser",
-				"testfiles/testPatientsSerialized.ser"),
+				"testfiles/testPatientsSerialized.ser",
+				"testfiles/testVisitsSerialized.ser"),
 				factory.getPatientVisitFactory());
 		
 		Clinic model = new Clinic(patientDb, visitDb, factory);
